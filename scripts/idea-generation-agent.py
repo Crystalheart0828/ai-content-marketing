@@ -5,16 +5,22 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from typing import List, Dict, Any
+import json
 
 # OpenAI API Key Configuration
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# Load credentials from Streamlit secrets
+gcp_credentials_json = st.secrets["GCP_CREDENTIALS_JSON"]
+credentials = service_account.Credentials.from_service_account_info(json.loads(gcp_credentials_json))
+
+
+
 # Google API Configuration (replace with your credentials file)
-GOOGLE_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    "/Users/KarenDing/Documents/GenAI/GCP-credentials/marketing-automation-443013-36573cda4697.json",
+GOOGLE_CREDENTIALS = service_account.Credentials.from_service_account_info(
+    json.loads(st.secrets["GCP_CREDENTIALS_JSON"]),
     scopes=["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/documents"]
 )
-
 
 # Function to interact with OpenAI API using chat completions
 def query_openai(prompt: str, content: str, system_message: str, model: str = "gpt-4o-mini") -> str:
